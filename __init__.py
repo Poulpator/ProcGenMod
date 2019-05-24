@@ -38,7 +38,11 @@ class PcgAddonUpdater(Operator):
         user_prefs = context.user_preferences
         addon_prefs = user_prefs.addons[__name__].preferences
         print("Debug: ProcGenMod: Fetching data...")
-        r = requests.get("https://raw.githubusercontent.com/aachman98/procgenmod/master/__init__.py")
+        try:
+            r = requests.get("https://raw.githubusercontent.com/aachman98/procgenmod/master/__init__.py")
+        except requests.exceptions.ConnectionError:
+            bpy.ops.report('ERROR', "No internet connetion")
+            return {'CANCELLED'}
         print("Debug: ProcGenMod: Data Fetched! Writing data...")
         f = open(addon_prefs.prop_addon_location, 'w', encoding="utf8")
         f.write(r.text)
